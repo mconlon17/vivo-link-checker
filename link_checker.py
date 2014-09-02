@@ -5,10 +5,10 @@
 
     Version 0.0 MC 2013-11-27
     --  basic framing, find all broken links
-    Verrion 0.1 MC 2013-11-28
+    Version 0.1 MC 2013-11-28
     --  Works as expected
     Version 0.2 MC 2014-08-13
-    --  Improve code formatting, datetime stamping of all output, eror handling,
+    --  Improve code formatting, datetime stamping of all output, error handling,
         passes pylint
 
 """
@@ -19,10 +19,10 @@ __license__ = "BSD 3-Clause license"
 __version__ = "0.2"
 
 from datetime import datetime
-from vivotools import rdf_header
-from vivotools import rdf_footer
-from vivotools import remove_uri
-from vivotools import vivo_sparql_query
+from vivofoundation import rdf_header
+from vivofoundation import rdf_footer
+from vivofoundation import remove_uri
+from vivofoundation import vivo_sparql_query
 import urllib
 
 query = """
@@ -40,7 +40,7 @@ data = vivo_sparql_query(query)["results"]["bindings"]
 print datetime.now(), "Links found = ", len(data)
 i = 0
 for item in data:
-    i = i + 1
+    i += 1
     if i % 500 == 0:
         print datetime.now(), i
     uri = item["uri"]["value"]
@@ -48,7 +48,7 @@ for item in data:
     linkuri = item["linkuri"]["value"]
     try:
         code = urllib.urlopen(linkuri).getcode()
-        if code == None:
+        if code is None:
             status["None"] = status.get("None", 0) + 1
         else:
             status[str(code)] = status.get(str(code), 0) + 1
@@ -60,6 +60,7 @@ for item in data:
         print datetime.now(), "Other Exception", None, i, linkuri
         status["Other Exception"] = status.get("Other Exception", 0) + 1
         continue
+
     if code <= 200 or code == 403 or code == 401:
         continue
     elif code == 404 or code == 410:
